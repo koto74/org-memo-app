@@ -1,0 +1,22 @@
+# pull request is created for master
+on:
+  pull_request:
+    types: [opened, synchronize]
+  push:
+    branches:
+      - master
+jobs:
+  test:
+    name: test 
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2.3.0
+        with:
+          flutter-version: '3.19.6'
+      - name: Install packages
+        run: flutter pub get
+      - name: Linter
+        run: flutter analyze
+      - name: Test
+        run: flutter test
