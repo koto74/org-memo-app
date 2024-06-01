@@ -54,4 +54,10 @@ class DatabaseHelper {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
+
+  Future<void> deleteDatabase() async {
+    String path = join(await getDatabasesPath(), 'memo_database.db');
+    await databaseFactory.deleteDatabase(path);
+    _database = null;
+  }
 }

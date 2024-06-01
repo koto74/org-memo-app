@@ -21,25 +21,19 @@ class _MemoListState extends State<MemoList> {
   }
 
   Future<void> _createMemo() async {
-    // Insert a new memo with default values
     final newMemo = {
       'title': 'New Memo',
       'content': '',
     };
     final id = await DatabaseHelper().insertMemo(newMemo);
-
-    // Fetch the newly created memo from the database
     final createdMemo = (await DatabaseHelper().getMemos())
         .firstWhere((memo) => memo['id'] == id);
-
-    // Navigate to the MemoPage to edit the new memo
     final updatedMemo = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => MemoPage(memo: createdMemo),
       ),
     );
-
     if (updatedMemo != null) {
       await DatabaseHelper().updateMemo(updatedMemo);
       _getMemoList();
@@ -53,11 +47,24 @@ class _MemoListState extends State<MemoList> {
     });
   }
 
+  Future<void> _deleteDatabase() async {
+    await DatabaseHelper().deleteDatabase();
+    setState(() {
+      _memos = [];
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Memo List'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: _deleteDatabase,
+          ),
+        ],
       ),
       body: ListView.builder(
         itemCount: _memos.length,
@@ -65,15 +72,17 @@ class _MemoListState extends State<MemoList> {
           final memo = _memos[index];
           return ListTile(
             title: Text(memo['title']),
-            onTap: () {
-              Navigator.push(
+            onTap: () async {
+              final updatedMemo = await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => MemoPage(memo: memo),
                 ),
-              ).then((_) {
+              );
+              if (updatedMemo != null) {
+                await DatabaseHelper().updateMemo(updatedMemo);
                 _getMemoList();
-              });
+              }
             },
           );
         },
