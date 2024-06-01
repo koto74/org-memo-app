@@ -59,6 +59,31 @@ class _MemoListState extends State<MemoList> {
     _getMemoList();
   }
 
+  Future<void> _confirmDeleteMemo(int id) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Delete Memo'),
+          content: const Text('Are you sure you want to delete this memo?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+    if (confirm == true) {
+      await _deleteMemo(id);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,30 +114,11 @@ class _MemoListState extends State<MemoList> {
                 _getMemoList();
               }
             },
-            onLongPress: () async {
-              final confirm = await showDialog<bool>(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: Text('Delete Memo'),
-                    content: Text('Are you sure you want to delete this memo?'),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(false),
-                        child: Text('Cancel'),
-                      ),
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(true),
-                        child: Text('Delete'),
-                      ),
-                    ],
-                  );
-                },
-              );
-              if (confirm == true) {
-                await _deleteMemo(memo['id']);
-              }
-            },
+            trailing: IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: () => _confirmDeleteMemo(memo['id']),
+            ),
+            onLongPress: () => _confirmDeleteMemo(memo['id']),
           );
         },
       ),
