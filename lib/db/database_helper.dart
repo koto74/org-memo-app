@@ -55,6 +55,15 @@ class DatabaseHelper {
     );
   }
 
+  Future<void> deleteMemo(int id) async {
+    final db = await database;
+    await db.delete(
+      'memos',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
   Future<void> deleteDatabase() async {
     String path = join(await getDatabasesPath(), 'memo_database.db');
     await databaseFactory.deleteDatabase(path);

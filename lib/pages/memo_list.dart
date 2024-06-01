@@ -54,6 +54,11 @@ class _MemoListState extends State<MemoList> {
     });
   }
 
+  Future<void> _deleteMemo(int id) async {
+    await DatabaseHelper().deleteMemo(id);
+    _getMemoList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,6 +87,30 @@ class _MemoListState extends State<MemoList> {
               if (updatedMemo != null) {
                 await DatabaseHelper().updateMemo(updatedMemo);
                 _getMemoList();
+              }
+            },
+            onLongPress: () async {
+              final confirm = await showDialog<bool>(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text('Delete Memo'),
+                    content: Text('Are you sure you want to delete this memo?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child: Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        child: Text('Delete'),
+                      ),
+                    ],
+                  );
+                },
+              );
+              if (confirm == true) {
+                await _deleteMemo(memo['id']);
               }
             },
           );
