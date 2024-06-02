@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import '../db/database_helper.dart';
+import '../models/memo.dart';
 import 'memo_page.dart';
 
 class MemoList extends StatefulWidget {
@@ -12,7 +13,7 @@ class MemoList extends StatefulWidget {
 }
 
 class _MemoListState extends State<MemoList> {
-  List<Map<String, dynamic>> _memos = [];
+  List<Memo> _memos = [];
 
   @override
   void initState() {
@@ -21,13 +22,10 @@ class _MemoListState extends State<MemoList> {
   }
 
   Future<void> _createMemo() async {
-    final newMemo = {
-      'title': 'New Memo',
-      'content': '',
-    };
+    final newMemo = Memo(title: 'New Memo', content: '');
     final id = await DatabaseHelper().insertMemo(newMemo);
-    final createdMemo = (await DatabaseHelper().getMemos())
-        .firstWhere((memo) => memo['id'] == id);
+    final createdMemo =
+        (await DatabaseHelper().getMemos()).firstWhere((memo) => memo.id == id);
     final updatedMemo = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -101,7 +99,7 @@ class _MemoListState extends State<MemoList> {
         itemBuilder: (context, index) {
           final memo = _memos[index];
           return ListTile(
-            title: Text(memo['title']),
+            title: Text(memo.title),
             onTap: () async {
               final updatedMemo = await Navigator.push(
                 context,
@@ -116,9 +114,9 @@ class _MemoListState extends State<MemoList> {
             },
             trailing: IconButton(
               icon: const Icon(Icons.delete),
-              onPressed: () => _confirmDeleteMemo(memo['id']),
+              onPressed: () => _confirmDeleteMemo(memo.id!),
             ),
-            onLongPress: () => _confirmDeleteMemo(memo['id']),
+            onLongPress: () => _confirmDeleteMemo(memo.id!),
           );
         },
       ),
