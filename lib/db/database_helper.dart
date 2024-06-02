@@ -2,6 +2,7 @@
 
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import '../models/memo.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
@@ -30,28 +31,40 @@ class DatabaseHelper {
     );
   }
 
-  Future<int> insertMemo(Map<String, dynamic> memo) async {
+  Future<int> insertMemo(Memo memo) async {
     final db = await database;
     return await db.insert(
       'memos',
-      memo,
+      memo.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
-  Future<List<Map<String, dynamic>>> getMemos() async {
+  Future<List<Memo>> getMemos() async {
     final db = await database;
-    return await db.query('memos');
+    final List<Map<String, dynamic>> maps = await db.query('memos');
+    return List.generate(maps.length, (i) {
+      return Memo.fromMap(maps[i]);
+    });
   }
 
-  Future<void> updateMemo(Map<String, dynamic> memo) async {
+  Future<void> updateMemo(Memo memo) async {
     final db = await database;
     await db.update(
       'memos',
-      memo,
+      memo.toMap(),
       where: 'id = ?',
-      whereArgs: [memo['id']],
+      whereArgs: [memo.id],
       conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<void> deleteMemo(int id) async {
+    final db = await database;
+    await db.delete(
+      'memos',
+      where: 'id = ?',
+      whereArgs: [id],
     );
   }
 

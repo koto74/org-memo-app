@@ -1,23 +1,24 @@
 // lib/pages/memo_page.dart
 
 import 'package:flutter/material.dart';
+import '../models/memo.dart';
 
 class MemoPage extends StatefulWidget {
-  final Map<String, dynamic> memo;
+  final Memo memo;
 
-  const MemoPage({Key? key, required this.memo}) : super(key: key);
+  const MemoPage({super.key, required this.memo});
 
   @override
-  _MemoPageState createState() => _MemoPageState();
+  MemoPageState createState() => MemoPageState();
 }
 
-class _MemoPageState extends State<MemoPage> {
+class MemoPageState extends State<MemoPage> {
   final TextEditingController _contentController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _contentController.text = widget.memo['content'];
+    _contentController.text = widget.memo.content;
   }
 
   @override
@@ -37,11 +38,11 @@ class _MemoPageState extends State<MemoPage> {
             onPressed: () {
               final content = _contentController.text;
               final title = content.split('\n').first;
-              final updatedMemo = {
-                'id': widget.memo['id'],
-                'title': title,
-                'content': content,
-              };
+              final updatedMemo = Memo(
+                id: widget.memo.id,
+                title: title,
+                content: content,
+              );
               Navigator.pop(context, updatedMemo);
             },
           ),
