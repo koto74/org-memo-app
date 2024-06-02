@@ -9,10 +9,10 @@ class MemoList extends StatefulWidget {
   const MemoList({super.key});
 
   @override
-  _MemoListState createState() => _MemoListState();
+  MemoListState createState() => MemoListState();
 }
 
-class _MemoListState extends State<MemoList> {
+class MemoListState extends State<MemoList> {
   List<Memo> _memos = [];
 
   @override
@@ -26,6 +26,7 @@ class _MemoListState extends State<MemoList> {
     final id = await DatabaseHelper().insertMemo(newMemo);
     final createdMemo =
         (await DatabaseHelper().getMemos()).firstWhere((memo) => memo.id == id);
+    if (!mounted) return;
     final updatedMemo = await Navigator.push(
       context,
       MaterialPageRoute(

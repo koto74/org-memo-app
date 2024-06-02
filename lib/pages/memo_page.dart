@@ -6,13 +6,13 @@ import '../models/memo.dart';
 class MemoPage extends StatefulWidget {
   final Memo memo;
 
-  const MemoPage({Key? key, required this.memo}) : super(key: key);
+  const MemoPage({super.key, required this.memo});
 
   @override
-  _MemoPageState createState() => _MemoPageState();
+  MemoPageState createState() => MemoPageState();
 }
 
-class _MemoPageState extends State<MemoPage> {
+class MemoPageState extends State<MemoPage> {
   final TextEditingController _contentController = TextEditingController();
 
   @override
